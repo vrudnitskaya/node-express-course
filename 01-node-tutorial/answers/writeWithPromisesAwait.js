@@ -1,10 +1,11 @@
 const { writeFile, readFile } = require("fs").promises;
+const path = require("path");
+
+const filePath = path.resolve(__dirname, "./temp.txt");
 
 const writer = async () => {
     try {
-        await writeFile("./temp.txt", "One\n", { flag: "a" });
-		await writeFile("./temp.txt", "Two\n", { flag: "a" });
-		await writeFile("./temp.txt", "Buckle My Shoe\n", { flag: "a" });
+        await writeFile(filePath, "One\nTwo\nBuckle My Shoe\n", { flag: "a" });
     } catch(error) {
         console.log(error.message);
     }
@@ -12,7 +13,7 @@ const writer = async () => {
 
 const reader = async() => {
     try{
-        const data = await readFile("./temp.txt", "utf8");
+        const data = await readFile(filePath, "utf8");
         console.log("File content: ", data);
 
     } catch (error) {
