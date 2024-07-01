@@ -6,11 +6,38 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Todo list</h1>
-    <ul>
-        <li>Buy groceries</li>
-        <li>Do homework</li>
-        <li>Cook a cake</li>
-    </ul>
+    <h1>The product list</h1>
+    <button id='fetchBtn'>Get list</button>
+    <div id="content"></div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const fetchBtn = document.querySelector('#fetchBtn');
+            const content = document.querySelector('#content');
+
+            fetchBtn.addEventListener('click', async() => {
+                try{
+                    const res = await fetch('/api/v1/products');
+                    const data = await res.json();
+
+                    //clear previous data
+                    content.innerHTML = '';
+
+                    data.forEach(product => {
+                        //create div for every product
+                        const productElement = document.createElement('div');
+                        productElement.innerHTML = `
+                            <h3>${product.name}</h3>
+                            <p>Price: ${product.price}</p>
+                            <p>${product.desc}</p>
+                        `;
+                        content.append(productElement);
+                    })
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            })
+        })
+    </script>
 </body>
 </html>
