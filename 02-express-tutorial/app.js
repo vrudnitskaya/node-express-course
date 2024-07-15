@@ -1,43 +1,34 @@
-//console.log('Express Tutorial')
 const express = require('express');
-const app = express();
 const port = 3000;
-const { products } = require("./data");
+const logger = require('./logger.js');
+const peopleRouter = require('./routes/people.js');
+const cookieParser = require('cookie-parser');
+const authorize = require('./auth.js');
+const app = express();
 
-app.use(express.static('./public'));
+app.use(express.static('./methods-public'));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.json());
+app.use(logger);
 
-app.get('/api/v1/test', (req, res) => {
-    res.json({ message: "It worked!" });
-});
+app.use('/api/v1/people', peopleRouter);
 
-app.get('/api/v1/products', (req, res) => {
-    res.json(products);
-});
-
-app.get('/api/v1/products/:productID', (req, res) => {
-    const idToFind = parseInt(req.params.productID);
-    const product = products.find((product) => product.id === idToFind);
-
-    if (!product) {
-        return res.status(404).json({ message: "That product was not found." });
+app.post('/logon', (req, res) => {
+	const { name } = req.body;
+    if(!name) {
+        return res.status(400).json({ success: false, message: "Please provide a name" })
     }
-
-    res.json(product);
+	res.cookie('name', name).status(201).json(`hello, ${name}`);
 });
 
-app.get('/api/v1/query', (req, res)=> {
-    const { search, limit, price } = req.query;
-    const queryProducts = products
-                            .filter(product => product.name.startsWith(search) && product.price < Number(price))
-                            .slice(0, limit || products.length);
-    if(queryProducts.length< 1) {
-        return res.status(200).send('No products matched your search');
-    };
-    res.status(200).json(queryProducts);
-})
+app.delete('/logoff', authorize, (req, res) => {
+	const { user } = req;
+	res.clearCookie("name").status(200).json(`${user} logged off`);
+});
 
-app.all('*', (req, res)=> {
-    res.status(404).send('404 error');
+app.get('/test', authorize, (req, res) => {
+	res.json(`${req.user} authorized`);
 });
 
 app.listen(port, () => {
