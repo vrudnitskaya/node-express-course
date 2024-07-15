@@ -164,8 +164,8 @@ console.log(titleCaseNames);
 // changes to this file with your MR for week 3.
 const editedNames = names
                         .filter((name) => {
-                            //Remove names with the wrong format and add them to array
-                            return name.split(" ").length !== 2})
+                            //Remove names with the wrong format
+                            return name.split(" ").length === 2})
                         .map(name => {
                             //change names to "Title Case"
                             return name.split(" ")
