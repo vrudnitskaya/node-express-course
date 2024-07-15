@@ -124,6 +124,17 @@ object.behavior()
 // challenges are:
 //
 // - Create a new array with only each person's last name
+const names = [
+	"Dimitry SantiAgo",
+	"Carlos d. Perez",
+	"tam  person",
+	"Mariana Gomez",
+	"Amy You",
+];
+
+const onlyLastNames = names.map((name) => name.split(" ").pop());
+console.log(onlyLastNames);
+
 // - Filter names that don't match the format "<first> <last>"
 //   - Should remove Tam because she has a double-space
 //   - Should remove Carlow because he has a middle-name
@@ -133,26 +144,39 @@ object.behavior()
 //     - "Timmy-Turner"
 //     - "Billy\nBob"
 //     - etc.
+const rightFormatNames = names.filter((name) => name.split(" ").length === 2);
+console.log(rightFormatNames);
 // - Create a new array where everyone's name is converted to "Title Case"
 //   - The first character of each word should be uppercase
 //   - All other characters in the word should be lowercase
 //   - expected output is ['Dimitry Santiago', 'Carlos D. Perez', 'Tam Person', ...]
+const titleCaseNames = names.map(name => name.split(" ")
+                            .filter(n => n !== "")
+                            .map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase())
+                            .join(" "));
+console.log(titleCaseNames);
 // - Last Challenge:
 //     Remove names with the wrong format
 //     AND change it to "Title Case"
 //     AND remove people whose last name ends with z
 //     AND write a message asking them to sign up
-//
 // For an extra assignment, you may implement these yourself! Include your
 // changes to this file with your MR for week 3.
-
-const names = [
-  'Dimitry SantiAgo',
-  'Carlos d. Perez',
-  'tam  person',
-  'Mariana Gomez',
-  'Amy You'
-];
+const editedNames = names
+                        .filter((name) => {
+                            //Remove names with the wrong format and add them to array
+                            return name.split(" ").length !== 2})
+                        .map(name => {
+                            //change names to "Title Case"
+                            return name.split(" ")
+                                .filter(n => n !== "")
+                                .map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase())
+                                .join(" ")
+                        })
+                        //remove people whose last name ends with z
+                        .filter(name => name[name.length-1] !== 'z')
+                        //write a message asking them to sign up
+                        .forEach(name =>console.log(`${name}, please sign up`));
 
 ///////////////////////////////////////////////////////////////////////////////
 //// put your answers above if you wish to do the challenges on your own //////
