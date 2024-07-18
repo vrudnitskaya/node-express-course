@@ -1,24 +1,45 @@
 const Task = require('../models/Task');
 
 const getAllTasks = (req, res) => {
-    res.send('get all tasks');
+    try{
+        res.send('get all tasks');
+    } catch (err){
+        res.status(500).json({ msg: err });
+    }
+    
 };
 
 const createTask = async (req, res) => {
-    const task = await Task.create(req.body);
-    res.status(201).json({ task });
+    try {
+        const task = await Task.create(req.body);
+        res.status(201).json({ task });
+    } catch(err) {
+        res.status(500).json({ msg: err });
+    }
 };
 
 const getTask = (req, res) => {
-    res.json({id:req.params.id});
+    try {
+        res.json({id:req.params.id});
+    } catch (err) {
+        res.status(500).json({ msg: err });
+    }
 };
 
 const updateTask = (req, res) => {
-    res.send('update task');
+    try {
+        res.send('update task');
+    } catch (err) {
+        res.status(500).json({ msg: err });
+    }
 };
 
 const deleteTask = (req,res) => {
-    res.send('delete task');
+    try {
+        res.send('delete task');
+    } catch (err) {
+        res.status(500).json({ msg: err });
+    }
 };
 
 module.exports = {
