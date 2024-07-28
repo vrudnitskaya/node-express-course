@@ -1,46 +1,46 @@
 const Task = require('../models/Task');
+const asyncWrapper = require('../middlware/async');
+const {createCustomError} = require('../errors/custom-error');
 
-const getAllTasks = (req, res) => {
-    try{
-        res.send('get all tasks');
-    } catch (err){
-        res.status(500).json({ msg: err });
-    }
-    
-};
+const getAllTasks = asyncWrapper (async (req, res) => {
+    const tasks = await Task.find({});
+    res.status(200).json({ tasks });
+});
 
-const createTask = async (req, res) => {
-    try {
-        const task = await Task.create(req.body);
-        res.status(201).json({ task });
-    } catch(err) {
-        res.status(500).json({ msg: err });
-    }
-};
+const createTask = asyncWrapper (async (req, res) => {
+    const task = await Task.create(req.body);
+    res.status(201).json({ task });
+});
 
-const getTask = (req, res) => {
-    try {
-        res.json({id:req.params.id});
-    } catch (err) {
-        res.status(500).json({ msg: err });
+const getTask = asyncWrapper (async (req, res, next) => {
+    const { id: taskID } = req.params;
+    const task = await Task.findOne({ _id: taskID });
+    if (!task) {
+        return next(createCustomError( `No task with ID ${taskID}`, 404))
     }
-};
+    res.status(200).json({ task });
+});
 
-const updateTask = (req, res) => {
-    try {
-        res.send('update task');
-    } catch (err) {
-        res.status(500).json({ msg: err });
+const deleteTask = asyncWrapper (async (req, res) => {
+    const { id: taskID } = req.params;
+    const task = await Task.findOneAndDelete({ _id: taskID }); 
+    if (!task) {
+        return next(createCustomError( `No task with ID ${taskID}`, 404))
     }
-};
+    res.status(200).json ({ task });
+});
 
-const deleteTask = (req,res) => {
-    try {
-        res.send('delete task');
-    } catch (err) {
-        res.status(500).json({ msg: err });
+const updateTask = asyncWrapper (async (req,res) => {
+    const { id:taskID } = req.params;
+    const task = await Task.findOneAndUpdate({_id: taskID },req.body, {
+        new:true, 
+        runValidators: true,
+    });
+    if (!task) {
+        return next(createCustomError( `No task with ID ${taskID}`, 404))
     }
-};
+    res.status(200).json({ task });
+});
 
 module.exports = {
     getAllTasks,
